@@ -13,7 +13,7 @@ for k in argv[1:]:
 
 network_set = int64(env['network'].split(','))
 
-net_file = env['file'].split('.')[0]+env['network'].replace(',','_')
+net_file = env['file'].split('.')[0].split('/')[0]+env['network'].replace(',','_')
 
 if 'dropout' in env:
 	dropout = env['dropout'].lower() == 'true'
@@ -49,7 +49,7 @@ for i in network_set:
 		net.dropout_layer(d_rate)
 
 net.output_layer(F, Activation.LOGISTIC)
-stop_dict = {"maximal_iterations": 4000, "minimal_value_differences" : 1e-4}
+stop_dict = {"maximal_iterations": 4000, "minimal_value_differences" : 1e-5}
 lma = LMA(stop_dict)
 lma.optimize(net, dataset)
 net.save(net_file+".net")
