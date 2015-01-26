@@ -1,0 +1,1 @@
+python evaluation.py file=data/ALL_S6_959126400_hveto_channels_signif_dt_set_0_evaluation.ann network=$1
