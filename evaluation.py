@@ -64,8 +64,8 @@ for i in roc_y:
 	tmp += i
 
 text =  "[AUC : " + str(tmp/len(roc_y)) + "]"
-g_x = numpy.linspace(0.0,1.0, 100)
-g_y = numpy.linspace(0.0,1.0, 100)
+g_x = numpy.linspace(0.0,1.0, 10000)
+g_y = numpy.linspace(0.0,1.0, 10000)
 plt.clf()
 plt.grid(True)
 plt.plot(roc_x,roc_y, '-r', label="ROC curve")
@@ -73,7 +73,7 @@ plt.plot(g_x, g_y, '--b', label="Guideline")
 plt.title(env['file'] + env['network'])
 plt.xlabel('False Alarm Probability')
 plt.ylabel('Efficiency')
-plt.xlim(xmin=1e-5, xmax=1)
+plt.xlim(xmin=1e-4, xmax=1)
 plt.xscale('log')
 plt.text(1e-2, 0.2, text)
 plt.legend()
