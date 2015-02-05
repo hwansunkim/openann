@@ -1,7 +1,6 @@
 from sys import *
-from openann import *
-from numpy import *
 from time import *
+from dataset import *
 
 dropout = False
 d_rate = 0.5
@@ -23,18 +22,7 @@ if 'd_rate' in env:
 	d_rate = float(env['d_rate'])
 	net_file += "_rate" + env['d_rate']
 
-f = open(env['file'], 'r')
-line = f.readline()
-input_vector = line.split()
-
-N = int(input_vector[0])
-D = int(input_vector[1])
-F = int(input_vector[2])
-
-lines = f.readlines()
-X = float64([i.strip().split() for i in lines[::2]])
-Y = float64([i.strip().split() for i in lines[1::2]])
-f.close()
+N,D,F,X,Y = openAnnfile(env['file'])
 
 dataset = DataSet(X, Y)
 

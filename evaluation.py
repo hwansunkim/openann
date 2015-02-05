@@ -78,6 +78,6 @@ plt.xlim(xmin=1e-4, xmax=1)
 plt.xscale('log')
 plt.text(1e-2, 0.2, text)
 plt.legend()
-plt.savefig("%s(%.4f).png" % (env['network'].split('.net')[0], auc))
-#plt.show()
+#plt.savefig("%s(%.4f).png" % (env['network'].split('.net')[0], auc))
+plt.show()
 
