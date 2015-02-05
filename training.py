@@ -13,7 +13,7 @@ for k in argv[1:]:
 
 network_set = int64(env['network'].split(','))
 
-net_file = "0130"+env['network'].replace(',','_')
+net_file = "MBSGD"+env['network'].replace(',','_')
 
 if 'dropout' in env:
 	dropout = env['dropout'].lower() == 'true'
@@ -41,19 +41,26 @@ dataset = DataSet(X, Y)
 RandomNumberGenerator().seed(0)
 
 net = Net()
+net.set_regularization(0.0, 0.01, 0.0)
 net.input_layer(D)
+if dropout:
+	net.dropout_layer(d_rate)
 
 for i in network_set:
-	net.fully_connected_layer(i, Activation.LOGISTIC)
+	net.fully_connected_layer(i, Activation.RECTIFIER)
 	if dropout:
 		net.dropout_layer(d_rate)
 
-net.output_layer(F, Activation.LOGISTIC)
+net.output_layer(F, Activation.SOFTMAX)
 
 start = time()
-stop_dict = {"maximal_iterations": 4000, "minimal_value_differences" : 1e-5}
-lma = LMA(stop_dict)
-lma.optimize(net, dataset)
+#stop_dict = {"maximal_iterations": 4000, "minimal_value_differences" : 1e-5}
+#lma = LMA(stop_dict)
+#lma.optimize(net, dataset)
+
+optimizer = MBSGD({"maximal_iterations": 500}, learning_rate=0.7, learning_rate_decay=0.999, min_learning_rate=0.001, momentum=0.5, batch_size=16)
+Log.set_info() # Deactivate debug output
+optimizer.optimize(net, dataset)
 end = time()
 net.save(net_file+".net")
 
