@@ -29,7 +29,7 @@ dataset = DataSet(X, Y)
 RandomNumberGenerator().seed(0)
 
 net = Net()
-net.set_regularization(0.0, 0.01, 0.0)
+#net.set_regularization(0.0, 0.01, 0.0)
 net.input_layer(D)
 if dropout:
 	net.dropout_layer(d_rate)
