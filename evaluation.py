@@ -19,5 +19,5 @@ for n in range(a):
     f += [net.predict(x[n])[0][0]]
     err = ((y[n] - net.predict(x[n]))**2).mean()
 
-drawROC(f,d)
+drawROC(env['network'].split('.net')[0],f,d)
 

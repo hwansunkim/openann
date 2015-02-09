@@ -80,7 +80,7 @@ def saveAnnfile(filename, x, y):
 		f.write("\n")
 	f.close()
 
-def drawROC(f, d):
+def drawROC(filename, f, d):
 	sorted_data = sorted(zip(f,d), reverse=False)
 	numOfTrue = float(d.count(1))
 	numOfFalse = float(d.count(0))
@@ -125,7 +125,8 @@ def drawROC(f, d):
 			trueCount[rank] = trueCount[rank] + 1 
 
 	ranks = numpy.linspace(start, next_step - step, len(trueCount))
-	text = "[AUC :%f]" % (tmp/len(roc_y))
+	auc = tmp/len(roc_y)
+	text = "[AUC :%f]" % (auc)
 	
 	# Guide line plot
 	g_x = linspace(0.0,1.0, 10000)
@@ -149,8 +150,9 @@ def drawROC(f, d):
 	ax2.set_xlim(xmin=1e-4, xmax=1)
 	ax2.set_xscale('log')
 	ax2.text(1e-2, 0.2, text)
-	plt.legend(loc=6)
-	plt.savefig("test.png")
-	plt.show()
+	plt.legend(loc=0)
+#	plt.savefig("%s($.4f).png"%(filename, auc))
+	plt.savefig("log%s(%f).png"%(filename, auc))
+#	plt.show()
 
 
