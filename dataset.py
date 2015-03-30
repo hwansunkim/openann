@@ -96,11 +96,16 @@ def drawROC(filename, f, d):
 		roc_x += [1.0 - float(list(sorted_d[0:i]).count(0.0)) / numOfFalse] # 1 - Specificity
 		roc_y += [float(list(sorted_d[i:]).count(1.0)) / numOfTrue]   # Sensitivity	
 		tmp = sorted_f[i]
-
 	#AUC calculating
 	tmp = 0
-	for i in roc_y:
-		tmp += i
+	count = 0
+	tmp_x = 100000000
+	for i in range(len(roc_y)):
+		if roc_x[i] != tmp_x:
+			count = count +1
+			tmp += roc_y[i]
+			tmp_x = roc_x[i]
+	auc = tmp/count 
 
 	smin = sorted_f.min()
 	smax = sorted_f.max()
@@ -125,7 +130,7 @@ def drawROC(filename, f, d):
 			trueCount[rank] = trueCount[rank] + 1 
 
 	ranks = numpy.linspace(start, next_step - step, len(trueCount))
-	auc = tmp/len(roc_y)
+	print "Number of Rank Data(%d), Unique Rank Data(%d)" %(len(roc_x), len(numpy.unique(roc_x)))
 	text = "[AUC :%f]" % (auc)
 	# Guide line plot
 	g_x = linspace(0.0,1.0, 10000)
@@ -147,6 +152,7 @@ def drawROC(filename, f, d):
 	ax2.set_xlabel('False Alarm Probability')
 	ax2.set_ylabel('Efficiency')
 	ax2.set_xlim(xmin=1e-4, xmax=1)
+	ax2.set_ylim(ymin=0, ymax=1.1)
 	ax2.set_xscale('log')
 	ax2.text(1e-2, 0.2, text)
 	plt.legend(loc=0)
