@@ -109,7 +109,7 @@ def drawROC(filename, f, d):
 	trueCount = [0]
 	falseCount = [0]
 	rank = 0
-	step = ranges / 100
+	step = numpy.float64(ranges) / 100.0
 	next_step = smin + step
 	start = next_step	
 	for i in range(len(sorted_f)):
@@ -127,7 +127,6 @@ def drawROC(filename, f, d):
 	ranks = numpy.linspace(start, next_step - step, len(trueCount))
 	auc = tmp/len(roc_y)
 	text = "[AUC :%f]" % (auc)
-	
 	# Guide line plot
 	g_x = linspace(0.0,1.0, 10000)
 	g_y = linspace(0.0,1.0, 10000)
@@ -152,7 +151,7 @@ def drawROC(filename, f, d):
 	ax2.text(1e-2, 0.2, text)
 	plt.legend(loc=0)
 #	plt.savefig("%s($.4f).png"%(filename, auc))
-	plt.savefig("log%s(%f).png"%(filename, auc))
-#	plt.show()
+#	plt.savefig("log%s(%f).png"%(filename, auc))
+	plt.show()
 
 
