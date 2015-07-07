@@ -12,7 +12,7 @@ for k in argv[1:]:
 
 network_set = int64(env['network'].split(','))
 
-net_file = "MBSGD"+env['network'].replace(',','_')
+net_file = "net/"+env['file'].split('/')[-1]+env['network'].replace(',','_')
 
 if 'dropout' in env:
 	dropout = env['dropout'].lower() == 'true'
@@ -42,15 +42,14 @@ for i in network_set:
 net.output_layer(F, Activation.SOFTMAX)
 
 start = time()
-#stop_dict = {"maximal_iterations": 4000, "minimal_value_differences" : 1e-5}
-#lma = LMA(stop_dict)
-#lma.optimize(net, dataset)
-
-optimizer = MBSGD({"maximal_iterations": 500}, learning_rate=0.7, learning_rate_decay=0.999, min_learning_rate=0.001, momentum=0.5, batch_size=16)
+stop_dict = {"maximal_iterations": 3000, "minimal_value_differences" : 0.01}
+lma = LMA(stop_dict)
+lma.optimize(net, dataset)
+#optimizer = MBSGD(stop_dict, learning_rate=0.7, learning_rate_decay=0.999, min_learning_rate=0.001, momentum=0.5, batch_size=16)
 Log.set_info() # Deactivate debug output
-optimizer.optimize(net, dataset)
+#optimizer.optimize(net, dataset)
 end = time()
-net.save(net_file+".net")
+net.save(net_file+"_%d(%f).net"%(stop_dict['maximal_iterations'],stop_dict['minimal_value_differences']))
 
 err = (array([Y[n] - net.predict(X[n]) for n in range(N)])**2).sum(axis=-1).mean()
 print err, end-start
