@@ -81,50 +81,23 @@ def saveAnnfile(filename, x, y):
 	f.close()
 
 def roc(f, d):
-        sorted_data = sorted(zip(f,d), reverse=False)
-        numOfTrue = float(d.count(1))
-        numOfFalse = float(d.count(0))
-
-        print "True(%d), False(%d)\n" %(numOfTrue, numOfFalse)
-        sorted_f = array(sorted_data)[:,0]
-        sorted_d = array(sorted_data)[:,1]
-
-        roc_x = []
-        roc_y = []
-        tmp = sorted_f[0]
-        for i in range(len(sorted_f)):
-                roc_x += [1.0 - float(list(sorted_d[0:i]).count(0.0)) / numOfFalse] # 1 - Specificity
-                roc_y += [float(list(sorted_d[i:]).count(1.0)) / numOfTrue]   # Sensitivity     
-                tmp = sorted_f[i]
-        #AUC calculating
-        tmp = 0
-        count = 0
-        tmp_x = 100000000
-        for i in range(len(roc_y)):
-                if roc_x[i] != tmp_x:
-                        count = count +1
-                        tmp += roc_y[i]
-                        tmp_x = roc_x[i]
-        auc = tmp/count
-	return roc_x, roc_y, auc
-
-
-def drawROC(filename, f, d):
 	sorted_data = sorted(zip(f,d), reverse=False)
 	numOfTrue = float(d.count(1))
 	numOfFalse = float(d.count(0))
 
 	print "True(%d), False(%d)\n" %(numOfTrue, numOfFalse)
-	sorted_f = array(sorted_data)[:,0]	
+	sorted_f = array(sorted_data)[:,0]
 	sorted_d = array(sorted_data)[:,1]
 
 	roc_x = []
 	roc_y = []
-	tmp = sorted_f[0]
+	tmp = 100
 	for i in range(len(sorted_f)):
-		roc_x += [1.0 - float(list(sorted_d[0:i]).count(0.0)) / numOfFalse] # 1 - Specificity
-		roc_y += [float(list(sorted_d[i:]).count(1.0)) / numOfTrue]   # Sensitivity	
-		tmp = sorted_f[i]
+		if sorted_d[i] == 0.0:
+			if sorted_f[i] != tmp:
+				roc_x += [1.0 - float(list(sorted_d[0:i]).count(0.0)) / numOfFalse] # 1 - Specificity
+				roc_y += [float(list(sorted_d[i:]).count(1.0)) / numOfTrue]   # Sensitivity     
+				tmp = sorted_f[i]
 	#AUC calculating
 	tmp = 0
 	count = 0
@@ -134,7 +107,16 @@ def drawROC(filename, f, d):
 			count = count +1
 			tmp += roc_y[i]
 			tmp_x = roc_x[i]
-	auc = tmp/count 
+	auc = tmp/count
+	return roc_x, roc_y, auc
+
+
+def drawROC(filename, f, d):
+	sorted_data = sorted(zip(f,d), reverse=False)
+	sorted_f = array(sorted_data)[:,0]
+	sorted_d = array(sorted_data)[:,1]
+	
+	roc_x, roc_y, auc = roc(f,d)
 
 	smin = sorted_f.min()
 	smax = sorted_f.max()
