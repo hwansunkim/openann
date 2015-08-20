@@ -30,6 +30,7 @@ def openAnnfile(filename):
 	lines = f.readlines()
 	X = float64([i.strip().split() for i in lines[::2]])
 	Y = float64([i.strip().split() for i in lines[1::2]])
+
 	f.close()
 	return N,D,F,X,Y
 
@@ -99,6 +100,7 @@ def roc(f, d):
 				roc_y += [float(list(sorted_d[i:]).count(1.0)) / numOfTrue]   # Sensitivity     
 				tmp = sorted_f[i]
 	#AUC calculating
+	fap = -1
 	tmp = 0
 	count = 0
 	tmp_x = 100000000
@@ -107,16 +109,19 @@ def roc(f, d):
 			count = count +1
 			tmp += roc_y[i]
 			tmp_x = roc_x[i]
+		if roc_x[i] <= 0.001 and fap == -1:
+			fap = (roc_y[i-1] - roc_y[i])/(roc_x[i-1] - roc_x[i])*(0.001 - roc_x[i-1]) + roc_y[i]
+			
 	auc = tmp/count
-	return roc_x, roc_y, auc
+	return (roc_x, roc_y, auc, fap)
 
 
 def drawROC(filename, f, d):
 	sorted_data = sorted(zip(f,d), reverse=False)
 	sorted_f = array(sorted_data)[:,0]
 	sorted_d = array(sorted_data)[:,1]
-	
-	roc_x, roc_y, auc = roc(f,d)
+
+	roc_x, roc_y, auc, fap = roc(f,d)
 
 	smin = sorted_f.min()
 	smax = sorted_f.max()
@@ -142,7 +147,7 @@ def drawROC(filename, f, d):
 
 	ranks = numpy.linspace(start, next_step - step, len(trueCount))
 	print "Number of Rank Data(%d), Unique Rank Data(%d)" %(len(roc_x), len(numpy.unique(roc_x)))
-	text = "[AUC :%f]" % (auc)
+	text = "[AUC :%f] / FAP(0.1%%) : %2.2f%%" % (auc, fap*100.0)
 	# Guide line plot
 	g_x = linspace(0.0,1.0, 10000)
 	g_y = linspace(0.0,1.0, 10000)

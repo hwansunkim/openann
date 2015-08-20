@@ -8,25 +8,9 @@ for k in argv[1:]:
         env.update({tmp[0]:tmp[1]})
 
 net = subprocess.check_output (env['network'] , shell=True)
+filelist = subprocess.check_output (env['file'] , shell=True)
 networks = net.strip().split('\n')
-N,D,F,X,Y = openAnnfile(env['file'])
-
-#for i in range(1,D,2):
-#        X[::,i] = abs(X[::,i] - 0.185369383532)
-
-#for i in range(1,D,2):
-#        x[::,i-1] = x[::, i-1] / (abs(x[::,i] - 0.185369383532)+1)
-
-#X = x[::,::2]
-
-#x_t = x[::,125:225]
-#D = 20
-#X = []
-#for n in range(N):
-#        X += [[max(x_t[:,i*5:i*5+5][n]) for i in range(20)]]
-
-
-dataset = DataSet(X, Y)
+filelists = filelist.strip().split('\n')
 
 g_x = linspace(0.0,1.0, 10000)
 g_y = linspace(0.0,1.0, 10000)
@@ -36,15 +20,17 @@ p, (ax1) = plt.subplots(1)
 ax1.grid(True)
 ax1.plot(g_x, g_y, '--b', label="Guideline")
 ax1.set_xscale('log')
-for net_name in networks:
+for i in range(len(filelists)):
+	N,D,F,X,Y = openAnnfile(filelists[i])
+	dataset = DataSet(X, Y)
 	net = Net()
-	net.load(net_name)
-	err = 0.0
+	net.load(networks[i])
 	f = []
- 	d = []
+	d = []
+	err = 0.0
 	roc_x = []
 	roc_y = []
-	auc = 0.0
+	auc = 0.0	
 	for n in range(N):
 		f += [net.predict(X[n])[0][0]]
 		d += [Y[n][0]]
@@ -52,8 +38,7 @@ for net_name in networks:
 
 	print "MSE: %lf" % (err[0][0]/N)
 	roc_x, roc_y, auc = roc(f,d)
-	if auc > 0.1:
-		ax1.plot(roc_x, roc_y, '-', linewidth=2, label=net_name+"(%f, %f)"%(auc,err[0][0]/N))
+	ax1.plot(roc_x, roc_y, '-', linewidth=2, label="evaluation(%d)"%i)
 
 plt.legend(loc=0, prop={'size':7})
 plt.show()

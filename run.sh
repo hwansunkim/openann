@@ -1,1 +1,7 @@
-python evaluation.py file=data/ALL_S6_959126400_hveto_channels_signif_dt_set_0_evaluation.ann network=$1
+for i in {0..9}
+do
+	python training.py file=full_data_signif_over_dt/ALL_S6_full_set_${i}_training.ann $1 $2 $3&	
+done
+
+
+

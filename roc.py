@@ -13,4 +13,13 @@ for b1,b2 in a:
 	f += [b1]
 	d += [b2]
 
-drawROC(pngfile,f,d)
+
+x,a,b,fap = roc(f,d)
+
+print fap
+#print "FAP 0.1%% =  %2.1f%%"%(fap*100)
+exit()
+for i in range(len(x)):
+	if x[i] <= 0.001:
+		print  'FAP 0.1 %g'%((y[i-1] - y[i])/(x[i-1] - x[i])*(0.001 - x[i-1]) + y[i])
+		break
